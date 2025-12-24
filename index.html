@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="az">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Məktəb Kitabxanası</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #f0f4f8;
+        margin: 0;
+        padding: 20px;
+        text-align: center;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      /* STATUS BAR */
+      #statusBar {
+        background: #333;
+        color: white;
+        padding: 10px;
+        border-radius: 8px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        display: none;
+      }
+
+      /* BUTONLAR */
+      .big-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 30px 50px;
+        font-size: 24px;
+        border-radius: 20px;
+        cursor: pointer;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
+        margin-top: 30px;
+      }
+      .big-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+      }
+
+      .admin-link {
+        display: inline-block;
+        margin-top: 40px;
+        color: #a0aec0;
+        font-size: 14px;
+        text-decoration: none;
+        cursor: pointer;
+        border-bottom: 1px dashed #a0aec0;
+      }
+
+      /* SON GÖTÜRÜLƏNLƏR SIYAHISI (YENİ) */
+      .recent-section {
+        margin-top: 40px;
+        text-align: left;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .recent-title {
+        font-size: 18px;
+        color: #4a5568;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 5px;
+      }
+      .recent-item {
+        background: white;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 12px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-left: 5px solid #667eea;
+      }
+      .recent-book {
+        font-weight: bold;
+        color: #2d3748;
+      }
+      .recent-student {
+        font-size: 13px;
+        color: #718096;
+      }
+
+      /* MODAL */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(5px);
+      }
+      .modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+      input {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0 20px 0;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        box-sizing: border-box;
+        outline: none;
+        transition: 0.3s;
+      }
+      input:focus {
+        border-color: #667eea;
+      }
+
+      /* CƏDVƏL (Müəllim üçün) */
+      .table-wrap {
+        overflow-x: auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #edf2f7;
+      }
+      th {
+        background: #f7fafc;
+        color: #4a5568;
+        font-weight: 600;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      /* Status Badge */
+      .badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+      }
+      .badge-active {
+        background: #fed7d7;
+        color: #c53030;
+      }
+      .badge-returned {
+        background: #c6f6d5;
+        color: #2f855a;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="statusBar">Sistem yoxlanılır...</div>
+
+    <div class="container">
+      <div id="studentSection">
+        <h1 style="color: #2d3748">📚 Kitabxana Qeydiyyatı</h1>
+        <p style="color: #718096">
+          Kitabı götürməmişdən əvvəl mütləq qeyd edin
+        </p>
+
+        <button class="big-btn" onclick="openModal()">📖 KİTAB GÖTÜR</button>
+
+        <div class="recent-section">
+          <div class="recent-title">🕒 Son Götürülən Kitablar</div>
+          <div id="recentList">
+            <p style="color: #a0aec0; text-align: center">Yüklənir...</p>
+          </div>
+        </div>
+
+        <br />
+        <div class="admin-link" onclick="verifyTeacher()">
+          Müəllim Girişi 🔒
+        </div>
+      </div>
+
+      <div id="adminSection" class="hidden">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+          "
+        >
+          <h2 style="color: #2d3748">📋 Qeydiyyat Jurnalı</h2>
+          <button
+            onclick="showStudent()"
+            style="
+              background: #cbd5e0;
+              border: none;
+              padding: 8px 15px;
+              border-radius: 6px;
+              cursor: pointer;
+              font-weight: bold;
+            "
+          >
+            Çıxış
+          </button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Şagird</th>
+                <th>Kitab</th>
+                <th>Tarix</th>
+                <th>Status</th>
+                <th>Əməliyyat</th>
+              </tr>
+            </thead>
+            <tbody id="logsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="myModal" class="modal">
+      <div class="modal-content">
+        <h2 style="margin-top: 0; color: #2d3748">Yeni Qeydiyyat</h2>
+
+        <label
+          style="
+            display: block;
+            text-align: left;
+            font-weight: bold;
+            color: #4a5568;
+          "
+          >Kitabın Adı</label
+        >
+        <input type="text" id="bTitle" placeholder="Kitabın üzərindəki ad..." />
+
+        <label
+          style="
+            display: block;
+            text-align: left;
+            font-weight: bold;
+            color: #4a5568;
+          "
+          >Ad və Soyadınız</label
+        >
+        <input type="text" id="sName" placeholder="Tam adınız..." />
+
+        <label
+          style="
+            display: block;
+            text-align: left;
+            font-weight: bold;
+            color: #4a5568;
+          "
+          >Sinif</label
+        >
+        <input type="text" id="sClass" placeholder="Məs: 9A" />
+
+        <button
+          onclick="saveData()"
+          style="
+            background: #48bb78;
+            color: white;
+            padding: 12px;
+            border: none;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+          "
+        >
+          TƏSDİQLƏ
+        </button>
+        <button
+          onclick="closeModal()"
+          style="
+            background: #f56565;
+            color: white;
+            padding: 12px;
+            border: none;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+          "
+        >
+          BAĞLA
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // --- SUPABASE PARAMETRLƏRİ ---
+      const SUPABASE_URL = "https://awcpvqlqpxlavezlbszq.supabase.co";
+      const SUPABASE_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF3Y3B2cWxxcHhsYXZlemxic3pxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY1NTYzNzAsImV4cCI6MjA4MjEzMjM3MH0.yHYa9zm6U0HsGDftxsdk-f6kr4dpc4xy_xYk6KO5SUM";
+
+      let sb;
+
+      // Səhifə açılanda
+      window.onload = async function () {
+        const status = document.getElementById("statusBar");
+        if (!window.supabase) {
+          status.style.display = "block";
+          status.innerText = "XƏTA: İnternet yoxdur!";
+          status.style.backgroundColor = "red";
+          return;
+        }
+
+        sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        console.log("Sistem hazırdır.");
+
+        // Son kitabları dərhal yüklə
+        fetchRecentBooks();
+      };
+
+      // --- ŞİFRƏ YOXLAMASI (Hintsiz) ---
+      function verifyTeacher() {
+        // İndiki tarixi hesablayırıq (Şifrə yoxlanışı üçün)
+        const today = new Date();
+        const d = String(today.getDate()).padStart(2, "0");
+        const m = String(today.getMonth() + 1).padStart(2, "0");
+        const y = today.getFullYear();
+        const correctPass = `${d}${m}${y}`;
+
+        // İstifadəçidən soruşuruq (Artıq hint yoxdur)
+        const userPass = prompt("Müəllim girişi üçün şifrəni daxil edin:");
+
+        if (userPass === correctPass) {
+          showAdmin();
+        } else if (userPass !== null) {
+          // Cancel basmayıbsa
+          alert("Yanlış şifrə.");
+        }
+      }
+
+      // --- YENİ FUNKSİYA: Son Kitabları Gətir ---
+      async function fetchRecentBooks() {
+        const listDiv = document.getElementById("recentList");
+
+        // Son 5 qeydi gətir
+        const { data, error } = await sb
+          .from("library_logs")
+          .select("book_title, student_name")
+          .order("borrow_date", { ascending: false })
+          .limit(5);
+
+        if (error) {
+          listDiv.innerHTML = "Yüklənmə xətası.";
+          return;
+        }
+
+        if (data.length === 0) {
+          listDiv.innerHTML =
+            "<p style='color:#a0aec0; text-align:center;'>Hələ heç kim kitab götürməyib.</p>";
+          return;
+        }
+
+        listDiv.innerHTML = ""; // Təmizlə
+        data.forEach((item) => {
+          listDiv.innerHTML += `
+                <div class="recent-item">
+                    <span class="recent-book">📖 ${item.book_title}</span>
+                    <span class="recent-student">${item.student_name}</span>
+                </div>
+            `;
+        });
+      }
+
+      // --- DIGƏR FUNKSİYALAR ---
+      function openModal() {
+        document.getElementById("myModal").style.display = "flex";
+      }
+      function closeModal() {
+        document.getElementById("myModal").style.display = "none";
+      }
+
+      async function saveData() {
+        const title = document.getElementById("bTitle").value;
+        const name = document.getElementById("sName").value;
+        const cls = document.getElementById("sClass").value;
+
+        if (!title || !name) return alert("Xanaları doldurun!");
+
+        const { error } = await sb
+          .from("library_logs")
+          .insert([
+            { book_title: title, student_name: name, student_class: cls },
+          ]);
+
+        if (error) alert("Xəta: " + error.message);
+        else {
+          alert("✅ Qeyd olundu!");
+          closeModal();
+          document.getElementById("bTitle").value = "";
+          document.getElementById("sName").value = "";
+          // Siyahını dərhal yenilə ki, şagird adını görsün
+          fetchRecentBooks();
+        }
+      }
+
+      async function showAdmin() {
+        document.getElementById("studentSection").classList.add("hidden");
+        document.getElementById("adminSection").classList.remove("hidden");
+
+        const tbody = document.getElementById("logsBody");
+        tbody.innerHTML = '<tr><td colspan="5">Yüklənir...</td></tr>';
+
+        const { data, error } = await sb
+          .from("library_logs")
+          .select("*")
+          .order("status", { ascending: true }) // Active first
+          .order("borrow_date", { ascending: false }); // Newest first
+
+        if (error) return alert(error.message);
+
+        tbody.innerHTML = "";
+        data.forEach((item) => {
+          const date = new Date(item.borrow_date).toLocaleDateString("az-AZ");
+          const statusHtml =
+            item.status === "active"
+              ? '<span class="badge badge-active">Oxuyur</span>'
+              : '<span class="badge badge-returned">Qaytarıb</span>';
+
+          const btnHtml =
+            item.status === "active"
+              ? `<button onclick="returnBook('${item.id}')" style="cursor:pointer; color:blue; background:none; border:1px solid blue; padding:2px 8px; border-radius:4px;">Qaytar</button>`
+              : "✔";
+
+          tbody.innerHTML += `
+                <tr>
+                    <td><b>${item.student_name}</b><br><small style="color:#777">${item.student_class}</small></td>
+                    <td>${item.book_title}</td>
+                    <td>${date}</td>
+                    <td>${statusHtml}</td>
+                    <td>${btnHtml}</td>
+                </tr>`;
+        });
+      }
+
+      function showStudent() {
+        document.getElementById("studentSection").classList.remove("hidden");
+        document.getElementById("adminSection").classList.add("hidden");
+        fetchRecentBooks(); // Geri qayıdanda da yenilə
+      }
+
+      async function returnBook(id) {
+        if (!confirm("Kitab qaytarıldı?")) return;
+        await sb
+          .from("library_logs")
+          .update({ status: "returned" })
+          .eq("id", id);
+        showAdmin();
+      }
+    </script>
+  </body>
+</html>
