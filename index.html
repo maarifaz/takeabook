@@ -27,13 +27,15 @@
         --radius: 16px;
         --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
           0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        --success: #10b981;
+        --error: #ef4444;
+        --warning: #f59e0b;
       }
 
       * {
         box-sizing: border-box;
         transition: all 0.2s ease-in-out;
       }
-
       body {
         font-family: "Inter", sans-serif;
         background-color: var(--bg-color);
@@ -42,13 +44,56 @@
         padding: 40px 20px;
         min-height: 100vh;
       }
-
       .container {
         max-width: 1100px;
         margin: 0 auto;
       }
 
-      /* --- HEADER & LANG --- */
+      /* TOAST */
+      #toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .toast {
+        background: white;
+        padding: 15px 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border-left: 5px solid var(--primary);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 250px;
+        animation: slideInToast 0.3s ease;
+        font-weight: 500;
+        font-size: 14px;
+      }
+      .toast.success {
+        border-left-color: var(--success);
+      }
+      .toast.error {
+        border-left-color: var(--error);
+      }
+      .toast.warning {
+        border-left-color: var(--warning);
+      }
+      @keyframes slideInToast {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* HEADER & LANG */
       .header-top {
         display: flex;
         justify-content: flex-end;
@@ -78,7 +123,7 @@
         color: var(--primary);
       }
 
-      /* --- HERO SECTION --- */
+      /* HERO */
       .hero-section {
         text-align: center;
         margin-bottom: 50px;
@@ -97,7 +142,7 @@
         font-size: 1.1rem;
       }
 
-      /* --- SEARCH & ACTION --- */
+      /* ACTION AREA */
       .action-area {
         background: var(--card-bg);
         padding: 30px;
@@ -164,14 +209,29 @@
       .btn-secondary:hover {
         background: #7c3aed;
       }
+      .btn-excel {
+        background: #10b981;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        margin-right: 10px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .btn-excel:hover {
+        background: #059669;
+      }
 
-      /* --- GRID LAYOUT --- */
+      /* CONTENT GRID */
       .content-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         gap: 25px;
       }
-
       .card {
         background: var(--card-bg);
         padding: 25px;
@@ -196,7 +256,7 @@
         gap: 8px;
       }
 
-      /* --- LIST ITEMS --- */
+      /* LISTS */
       .list-item {
         display: flex;
         justify-content: space-between;
@@ -207,7 +267,6 @@
       .list-item:last-child {
         border: none;
       }
-
       .rank-circle {
         width: 28px;
         height: 28px;
@@ -234,7 +293,18 @@
         color: #c2410c;
       }
 
-      /* --- RESULT CARDS (Search) & TOOLTIP --- */
+      /* CLICKABLE NAMES */
+      .clickable-name {
+        cursor: pointer;
+        color: var(--text-main);
+        transition: color 0.2s;
+      }
+      .clickable-name:hover {
+        color: var(--primary);
+        text-decoration: underline;
+      }
+
+      /* SEARCH & TOOLTIPS & COVERS */
       #searchResult {
         margin-top: 15px;
       }
@@ -264,7 +334,29 @@
         color: #92400e;
       }
 
-      /* --- INFO & REFLECTION TOOLTIP --- */
+      .book-cover-wrapper {
+        margin-right: 15px;
+        flex-shrink: 0;
+      }
+      .book-cover {
+        width: 45px;
+        height: 65px;
+        object-fit: cover;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .book-placeholder {
+        width: 45px;
+        height: 65px;
+        background: #e5e7eb;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #9ca3af;
+        font-size: 20px;
+      }
+
       .info-wrapper {
         position: relative;
         display: inline-block;
@@ -288,17 +380,32 @@
         color: white;
       }
 
-      /* ADMIN TƏRƏFİNDƏ RƏY İKONU */
       .admin-ref-icon {
-        cursor: help;
+        cursor: pointer;
         margin-left: 5px;
-        color: #8b5cf6; /* Purple */
-        font-size: 14px;
+        font-size: 16px;
         position: relative;
         display: inline-block;
       }
+      .admin-ref-icon.pending {
+        color: #ef4444;
+        animation: pulse 2s infinite;
+      }
+      .admin-ref-icon.approved {
+        color: #8b5cf6;
+      }
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
 
-      /* ORTAQ TOOLTIP STİLİ */
       .ref-tooltip {
         visibility: hidden;
         width: 220px;
@@ -328,14 +435,13 @@
         border-style: solid;
         border-color: #1f2937 transparent transparent transparent;
       }
-
       .info-wrapper:hover .ref-tooltip,
       .admin-ref-icon:hover .ref-tooltip {
         visibility: visible;
         opacity: 1;
       }
 
-      /* --- ADMIN TABLE --- */
+      /* ADMIN TABLE */
       .table-wrapper {
         background: var(--card-bg);
         border-radius: var(--radius);
@@ -367,7 +473,7 @@
         background: #f9fafb;
       }
 
-      /* --- BADGES --- */
+      /* BADGES & BUTTONS */
       .badge {
         display: inline-flex;
         align-items: center;
@@ -401,7 +507,6 @@
         border-radius: 4px;
         border: 1px dashed #4338ca;
       }
-
       .btn-sm {
         padding: 6px 12px;
         border-radius: 6px;
@@ -424,7 +529,7 @@
         background: var(--bg-color);
       }
 
-      /* --- MODAL --- */
+      /* MODAL & AUTOCOMPLETE */
       .modal-overlay {
         position: fixed;
         top: 0;
@@ -453,7 +558,6 @@
           transform: scale(1);
         }
       }
-
       .form-input,
       textarea {
         width: 100%;
@@ -469,7 +573,6 @@
         border-color: var(--primary);
         outline: none;
       }
-
       .suggestions-dropdown {
         position: absolute;
         top: 100%;
@@ -497,6 +600,93 @@
         color: var(--primary);
       }
 
+      /* STARS */
+      .star-rating {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+        margin: 10px 0;
+      }
+      .star {
+        font-size: 24px;
+        color: #d1d5db;
+        cursor: pointer;
+        transition: color 0.2s;
+      }
+      .star.selected {
+        color: #f59e0b;
+      }
+      .star:hover {
+        transform: scale(1.2);
+      }
+
+      /* CONFIRM */
+      .confirm-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .confirm-actions button {
+        flex: 1;
+        padding: 12px;
+        border-radius: 10px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .btn-yes {
+        background: var(--primary);
+        color: white;
+      }
+      .btn-yes:hover {
+        background: var(--primary-dark);
+      }
+      .btn-no {
+        background: #f3f4f6;
+        color: var(--text-main);
+      }
+      .btn-no:hover {
+        background: #e5e7eb;
+      }
+
+      /* DETAILS LIST */
+      .detail-list {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-top: 10px;
+      }
+      .detail-item {
+        padding: 12px;
+        border-bottom: 1px solid #f3f4f6;
+      }
+      .detail-item:last-child {
+        border: none;
+      }
+      .detail-header {
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 4px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .detail-sub {
+        font-size: 12px;
+        color: #6b7280;
+        display: flex;
+        justify-content: space-between;
+      }
+      .detail-text {
+        font-size: 13px;
+        color: #374151;
+        margin-top: 5px;
+        font-style: italic;
+        background: #f9fafb;
+        padding: 8px;
+        border-radius: 6px;
+      }
+
       .admin-link {
         text-align: center;
         margin-top: 40px;
@@ -508,13 +698,14 @@
         text-decoration: underline;
         color: var(--primary);
       }
-
       .hidden {
         display: none !important;
       }
     </style>
   </head>
   <body>
+    <div id="toast-container"></div>
+
     <div class="header-top">
       <div class="lang-switch">
         <button class="lang-btn" onclick="changeLanguage('az')">AZ</button>
@@ -545,9 +736,7 @@
               onkeyup="checkBookStatus()"
             />
           </div>
-
           <div id="searchResult"></div>
-
           <div class="btn-group">
             <button class="cta-btn" onclick="openModal('order')">
               <span data-i18n="btn_order">Kitab Sifariş Et</span>
@@ -576,7 +765,6 @@
               </p>
             </div>
           </div>
-
           <div class="card">
             <div class="card-header">
               <span class="card-title"
@@ -590,7 +778,6 @@
               </p>
             </div>
           </div>
-
           <div class="card">
             <div class="card-header">
               <span class="card-title"
@@ -606,7 +793,7 @@
           </div>
         </div>
 
-        <div class="admin-link" onclick="verifyTeacher()">
+        <div class="admin-link" onclick="openModal('teacherLogin')">
           <i class="fas fa-shield-alt"></i>
           <span data-i18n="teacher_login">Müəllim Girişi</span>
         </div>
@@ -627,16 +814,20 @@
           >
             İdarəetmə Paneli
           </h2>
-          <button
-            onclick="showStudent()"
-            class="btn-sm"
-            style="background: #ef4444; color: white; border: none"
-            data-i18n="btn_exit"
-          >
-            Çıxış
-          </button>
+          <div style="display: flex">
+            <button onclick="exportToExcel()" class="btn-excel">
+              <i class="fas fa-file-excel"></i> Excel
+            </button>
+            <button
+              onclick="showStudent()"
+              class="btn-sm"
+              style="background: #ef4444; color: white; border: none"
+              data-i18n="btn_exit"
+            >
+              Çıxış
+            </button>
+          </div>
         </div>
-
         <div style="margin-bottom: 20px">
           <input
             type="text"
@@ -648,7 +839,6 @@
             style="max-width: 300px; margin: 0"
           />
         </div>
-
         <div class="table-wrapper">
           <table id="adminTable">
             <thead>
@@ -674,6 +864,7 @@
         <h3 style="margin-top: 0; text-align: center" data-i18n="modal_title">
           Yeni Sifariş
         </h3>
+
         <div style="position: relative">
           <input
             type="text"
@@ -686,13 +877,20 @@
           />
           <div id="bookSuggestions" class="suggestions-dropdown"></div>
         </div>
-        <input
-          type="text"
-          id="sName"
-          class="form-input"
-          data-placeholder="ph_student_name"
-          placeholder="Ad və Soyad"
-        />
+
+        <div style="position: relative">
+          <input
+            type="text"
+            id="sName"
+            class="form-input"
+            data-placeholder="ph_student_name"
+            placeholder="Ad və Soyad"
+            autocomplete="off"
+            oninput="searchStudentsForModal(this.value)"
+          />
+          <div id="studentSuggestions" class="suggestions-dropdown"></div>
+        </div>
+
         <input
           type="text"
           id="sClass"
@@ -700,6 +898,7 @@
           data-placeholder="ph_class"
           placeholder="Sinif"
         />
+
         <button
           onclick="saveData()"
           class="cta-btn"
@@ -767,6 +966,13 @@
               margin-bottom: 10px;
             "
           ></p>
+          <div class="star-rating" id="starRating">
+            <span class="star" onclick="setRating(1)">★</span>
+            <span class="star" onclick="setRating(2)">★</span>
+            <span class="star" onclick="setRating(3)">★</span>
+            <span class="star" onclick="setRating(4)">★</span>
+            <span class="star" onclick="setRating(5)">★</span>
+          </div>
           <textarea
             id="refText"
             rows="4"
@@ -799,6 +1005,125 @@
       </div>
     </div>
 
+    <div id="teacherLoginModal" class="modal-overlay">
+      <div class="modal-card">
+        <h3 style="margin-top: 0; text-align: center" data-i18n="teacher_login">
+          Müəllim Girişi
+        </h3>
+        <p
+          style="
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 15px;
+          "
+        >
+          Giriş üçün şifrəni daxil edin
+        </p>
+        <input
+          type="password"
+          id="teacherPassInput"
+          class="form-input"
+          style="text-align: center; letter-spacing: 2px"
+          placeholder="******"
+        />
+        <button
+          onclick="submitTeacherLogin()"
+          class="cta-btn"
+          style="width: 100%; margin-top: 10px; justify-content: center"
+        >
+          Daxil Ol
+        </button>
+        <button
+          onclick="closeModal('teacherLogin')"
+          style="
+            width: 100%;
+            background: none;
+            border: none;
+            color: #999;
+            margin-top: 10px;
+            cursor: pointer;
+          "
+          data-i18n="btn_cancel"
+        >
+          Ləğv et
+        </button>
+      </div>
+    </div>
+
+    <div id="confirmModal" class="modal-overlay">
+      <div class="modal-card">
+        <h3 style="margin-top: 0; text-align: center; color: var(--text-main)">
+          Təsdiqlə
+        </h3>
+        <p
+          id="confirmMessage"
+          style="
+            text-align: center;
+            color: #555;
+            font-size: 15px;
+            margin-bottom: 20px;
+          "
+        >
+          Əminsiniz?
+        </p>
+        <div class="confirm-actions">
+          <button onclick="closeModal('confirm')" class="btn-no">Xeyr</button>
+          <button id="confirmBtnYes" class="btn-yes">Bəli</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="bookDetailsModal" class="modal-overlay">
+      <div class="modal-card" style="max-width: 500px">
+        <h3
+          id="detailBookTitle"
+          style="margin-top: 0; text-align: center; color: var(--primary)"
+        >
+          Kitab Adı
+        </h3>
+        <div id="detailBookContent" class="detail-list">Loading...</div>
+        <button
+          onclick="closeModal('bookDetails')"
+          style="
+            width: 100%;
+            background: none;
+            border: none;
+            color: #999;
+            margin-top: 10px;
+            cursor: pointer;
+          "
+        >
+          Bağla
+        </button>
+      </div>
+    </div>
+
+    <div id="studentDetailsModal" class="modal-overlay">
+      <div class="modal-card" style="max-width: 500px">
+        <h3
+          id="detailStudentName"
+          style="margin-top: 0; text-align: center; color: var(--primary)"
+        >
+          Şagird Adı
+        </h3>
+        <div id="detailStudentContent" class="detail-list">Loading...</div>
+        <button
+          onclick="closeModal('studentDetails')"
+          style="
+            width: 100%;
+            background: none;
+            border: none;
+            color: #999;
+            margin-top: 10px;
+            cursor: pointer;
+          "
+        >
+          Bağla
+        </button>
+      </div>
+    </div>
+
     <script>
       const SUPABASE_URL = "https://awcpvqlqpxlavezlbszq.supabase.co";
       const SUPABASE_KEY =
@@ -807,6 +1132,7 @@
       let allLogs = [];
       let currentLang = localStorage.getItem("lang") || "az";
       let currentRefId = null;
+      let currentRating = 0;
 
       const translations = {
         az: {
@@ -832,7 +1158,7 @@
           modal_ref_title: "Rəy Yaz",
           lbl_enter_code: "5 rəqəmli kodu daxil et:",
           ph_book_name: "Kitabın Adı (Yazmağa başla...)",
-          ph_student_name: "Ad və Soyad",
+          ph_student_name: "Ad və Soyad (Yazmağa başla...)",
           ph_class: "Sinif",
           btn_submit: "Təsdiqlə",
           btn_cancel: "Bağla",
@@ -846,11 +1172,15 @@
           btn_return: "Qaytar",
           alert_approve: "Təsdiq edirsiniz?",
           alert_return: "Qaytarıldı?",
-          prompt_pass: "Giriş Şifrəsi:",
           alert_wrong_pass: "Yanlış şifrə!",
           days_left: "gün",
           unnamed: "Adsız Kitab",
           code_lbl: "Kod",
+          toast_success: "✅ Uğurlu əməliyyat!",
+          toast_error: "❌ Xəta baş verdi!",
+          toast_fill: "⚠️ Xanaları doldurun!",
+          toast_code_used: "⚠️ Bu kod artıq istifadə olunub!",
+          toast_not_returned: "⚠️ Kitabı hələ təhvil verməmisiniz!",
         },
         en: {
           app_title: "Infinity Library",
@@ -875,7 +1205,7 @@
           modal_ref_title: "Write Reflection",
           lbl_enter_code: "Enter 5-digit code:",
           ph_book_name: "Book Title...",
-          ph_student_name: "Full Name",
+          ph_student_name: "Full Name (Start typing...)",
           ph_class: "Class",
           btn_submit: "Submit",
           btn_cancel: "Close",
@@ -889,11 +1219,15 @@
           btn_return: "Return",
           alert_approve: "Approve?",
           alert_return: "Returned?",
-          prompt_pass: "Password:",
           alert_wrong_pass: "Wrong password!",
           days_left: "days",
           unnamed: "Unnamed",
           code_lbl: "Code",
+          toast_success: "✅ Success!",
+          toast_error: "❌ Error!",
+          toast_fill: "⚠️ Fill fields!",
+          toast_code_used: "⚠️ Code already used!",
+          toast_not_returned: "⚠️ Book not returned yet!",
         },
         tr: {
           app_title: "Infinity Library",
@@ -918,7 +1252,7 @@
           modal_ref_title: "Yorum Yaz",
           lbl_enter_code: "5 haneli kodu gir:",
           ph_book_name: "Kitap Adı...",
-          ph_student_name: "Ad Soyad",
+          ph_student_name: "Ad Soyad (Yazmaya başla...)",
           ph_class: "Sınıf",
           btn_submit: "Gönder",
           btn_cancel: "Kapat",
@@ -932,11 +1266,15 @@
           btn_return: "İade Al",
           alert_approve: "Onaylıyor musun?",
           alert_return: "İade edildi mi?",
-          prompt_pass: "Şifre:",
           alert_wrong_pass: "Hatalı şifre!",
           days_left: "gün",
           unnamed: "Adsız",
           code_lbl: "Kod",
+          toast_success: "✅ Başarılı!",
+          toast_error: "❌ Hata!",
+          toast_fill: "⚠️ Alanları doldurun!",
+          toast_code_used: "⚠️ Bu kod daha önce kullanıldı!",
+          toast_not_returned: "⚠️ Kitabı henüz teslim etmediniz!",
         },
         ru: {
           app_title: "Infinity Library",
@@ -961,7 +1299,7 @@
           modal_ref_title: "Написать отзыв",
           lbl_enter_code: "Введите 5-значный код:",
           ph_book_name: "Название...",
-          ph_student_name: "ФИО",
+          ph_student_name: "ФИО (Начните вводить...)",
           ph_class: "Класс",
           btn_submit: "Отправить",
           btn_cancel: "Закрыть",
@@ -975,11 +1313,15 @@
           btn_return: "Вернуть",
           alert_approve: "Выдать?",
           alert_return: "Вернули?",
-          prompt_pass: "Пароль:",
           alert_wrong_pass: "Ошибка!",
           days_left: "дн.",
           unnamed: "Без назв.",
           code_lbl: "Код",
+          toast_success: "✅ Успешно!",
+          toast_error: "❌ Ошибка!",
+          toast_fill: "⚠️ Заполните поля!",
+          toast_code_used: "⚠️ Код уже использован!",
+          toast_not_returned: "⚠️ Книга еще не возвращена!",
         },
       };
 
@@ -1007,30 +1349,100 @@
       }
 
       window.onload = async function () {
-        if (!window.supabase) return alert("Offline!");
+        if (!window.supabase) return showToast("Offline!", "error");
         sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         changeLanguage(currentLang);
         await fetchAllLogsForSystem();
       };
 
-      // --- LOGIC: CODE & REFLECTION ---
-      async function approveBook(id) {
-        if (confirm(t("alert_approve"))) {
-          const now = new Date().toISOString();
-          // Generate 5-digit numeric code
-          const code = Math.floor(10000 + Math.random() * 90000).toString();
+      function showToast(message, type = "info") {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        toast.innerHTML = message;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
 
-          await sb
+      function customConfirm(message, onConfirm) {
+        const modal = document.getElementById("confirmModal");
+        const msgEl = document.getElementById("confirmMessage");
+        const yesBtn = document.getElementById("confirmBtnYes");
+
+        msgEl.innerText = message;
+        modal.style.display = "flex";
+
+        const newYesBtn = yesBtn.cloneNode(true);
+        yesBtn.parentNode.replaceChild(newYesBtn, yesBtn);
+
+        newYesBtn.onclick = function () {
+          onConfirm();
+          modal.style.display = "none";
+        };
+      }
+
+      function submitTeacherLogin() {
+        const today = new Date();
+        const correctPass = `${String(today.getDate()).padStart(
+          2,
+          "0"
+        )}${String(today.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}${today.getFullYear()}`;
+        const userPass = document.getElementById("teacherPassInput").value;
+        if (userPass === correctPass) {
+          showAdmin();
+          closeModal("teacherLogin");
+          document.getElementById("teacherPassInput").value = "";
+        } else {
+          showToast(t("alert_wrong_pass"), "error");
+        }
+      }
+
+      function setRating(n) {
+        currentRating = n;
+        document.querySelectorAll(".star").forEach((star, index) => {
+          if (index < n) star.classList.add("selected");
+          else star.classList.remove("selected");
+        });
+      }
+
+      async function approveBook(id) {
+        customConfirm(t("alert_approve"), async () => {
+          const now = new Date().toISOString();
+          const code = Math.floor(10000 + Math.random() * 90000).toString();
+          const { error } = await sb
             .from("library_logs")
             .update({ status: "active", borrow_date: now, secret_code: code })
             .eq("id", id);
-          fetchAllLogsForSystem();
-        }
+          if (!error) {
+            showToast(t("toast_success"), "success");
+            fetchAllLogsForSystem();
+          }
+        });
+      }
+
+      async function approveReflection(id) {
+        customConfirm("Bu rəyi təsdiq edirsiniz?", async () => {
+          const { error } = await sb
+            .from("library_logs")
+            .update({ is_reflection_approved: true })
+            .eq("id", id);
+          if (!error) {
+            showToast("Rəy təsdiqləndi!", "success");
+            fetchAllLogsForSystem();
+          }
+        });
       }
 
       async function verifyRefCode() {
         const code = document.getElementById("refCode").value.trim();
-        if (code.length !== 5) return alert("Kod 5 rəqəmli olmalıdır!");
+        if (code.length !== 5)
+          return showToast("Kod 5 rəqəmli olmalıdır!", "error");
 
         const { data, error } = await sb
           .from("library_logs")
@@ -1039,9 +1451,15 @@
           .single();
 
         if (error || !data) {
-          alert("Kod tapılmadı!");
+          showToast("Kod tapılmadı!", "error");
+        } else if (data.status !== "returned") {
+          showToast(t("toast_not_returned"), "warning"); // MUST BE RETURNED
+        } else if (data.reflection && data.reflection.length > 0) {
+          showToast(t("toast_code_used"), "warning");
         } else {
           currentRefId = data.id;
+          currentRating = 0;
+          setRating(0);
           document.getElementById("refStep1").classList.add("hidden");
           document.getElementById("refStep2").classList.remove("hidden");
           document.getElementById(
@@ -1052,18 +1470,42 @@
 
       async function saveReflection() {
         const text = document.getElementById("refText").value;
-        if (!text) return alert("Rəy yazın!");
-
-        await sb
+        if (!text) return showToast("Rəy yazın!", "warning");
+        const { error } = await sb
           .from("library_logs")
-          .update({ reflection: text })
+          .update({
+            reflection: text,
+            rating: currentRating,
+            is_reflection_approved: false,
+          })
           .eq("id", currentRefId);
-        alert("Təşəkkürlər! Rəyiniz qeyd olundu.");
-        closeModal("reflection");
-        fetchAllLogsForSystem();
+        if (!error) {
+          showToast(
+            "Təşəkkürlər! Rəyiniz müəllim tərəfindən yoxlanacaq.",
+            "success"
+          );
+          closeModal("reflection");
+          fetchAllLogsForSystem();
+        }
       }
 
-      // --- SEARCH & INFO (UPDATED) ---
+      async function fetchBookCover(title) {
+        try {
+          const res = await fetch(
+            `https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(
+              title
+            )}&maxResults=1`
+          );
+          const data = await res.json();
+          if (data.items && data.items[0].volumeInfo.imageLinks) {
+            return data.items[0].volumeInfo.imageLinks.smallThumbnail;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+        return null;
+      }
+
       async function checkBookStatus() {
         const query = document
           .getElementById("studentSearch")
@@ -1078,7 +1520,6 @@
           .select("*")
           .ilike("title", `%${query}%`)
           .limit(5);
-
         if (!foundBooks || foundBooks.length === 0) {
           resultDiv.innerHTML = `<p style="text-align:center; color:#999; font-size:13px;">${t(
             "no_data"
@@ -1099,44 +1540,59 @@
               ? `<span class="res-status" style="background:#d1fae5; color:#065f46">Mövcud: ${available}</span>`
               : `<span class="res-status st-red">Bitib (0)</span>`;
 
-          // Random Reflection Logic
           const reflections = logs.filter(
-            (l) => l.reflection && l.reflection.length > 5
+            (l) => l.reflection && l.is_reflection_approved
           );
           let reflectionHtml = "";
           if (reflections.length > 0) {
-            const randomRef =
-              reflections[Math.floor(Math.random() * reflections.length)]
-                .reflection;
-            reflectionHtml = `
-                    <div class="info-wrapper">
-                        <div class="info-icon"><i class="fas fa-info"></i></div>
-                        <div class="ref-tooltip">
-                            <i class="fas fa-quote-left" style="color:#aaa; margin-right:5px;"></i> ${randomRef}
-                        </div>
-                    </div>
-                `;
+            const randomLog =
+              reflections[Math.floor(Math.random() * reflections.length)];
+            const stars = randomLog.rating ? "⭐".repeat(randomLog.rating) : "";
+            reflectionHtml = `<div class="info-wrapper"><div class="info-icon"><i class="fas fa-info"></i></div><div class="ref-tooltip">${stars}<br><i class="fas fa-quote-left" style="color:#aaa; margin-right:5px;"></i> ${randomLog.reflection}</div></div>`;
           }
 
+          const coverUrl = await fetchBookCover(book.title);
+          const imageHtml = coverUrl
+            ? `<div class="book-cover-wrapper"><img src="${coverUrl}" class="book-cover" alt="Cover"></div>`
+            : `<div class="book-cover-wrapper"><div class="book-placeholder"><i class="fas fa-book"></i></div></div>`;
+
           resultDiv.innerHTML += `
-                <div class="res-card">
-                    <div style="display:flex; align-items:center;">
-                        <div>
-                            <div style="font-weight:700; font-size:14px;">${
-                              book.title
-                            }</div>
-                            <div style="font-size:12px; color:#666;">${
-                              book.author || ""
-                            }</div>
-                        </div>
-                        ${reflectionHtml}
+            <div class="res-card">
+                <div style="display:flex; align-items:center;">
+                    ${imageHtml}
+                    <div>
+                        <div style="font-weight:700; font-size:14px;">${
+                          book.title
+                        }</div>
+                        <div style="font-size:12px; color:#666;">${
+                          book.author || ""
+                        }</div>
                     </div>
-                    <div style="text-align:right;">${statusBadge}</div>
-                </div>`;
+                    ${reflectionHtml}
+                </div>
+                <div style="text-align:right;">${statusBadge}</div>
+            </div>`;
         }
       }
 
-      // --- UPDATED MODAL SEARCH WITH QUANTITY ---
+      function exportToExcel() {
+        let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+        csvContent += "Şagird,Sinif,Kitab,Status,Tarix,Rəy,Ulduz\n";
+        allLogs.forEach((row) => {
+          const r = row.reflection ? row.reflection.replace(/,/g, " ") : "";
+          const rt = row.rating ? row.rating : "";
+          csvContent += `${row.student_name},${row.student_class},${row.book_title},${row.status},${row.borrow_date},${r},${rt}\n`;
+        });
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "kitabxana_jurnali.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast("Excel faylı endirildi!", "success");
+      }
+
       let searchTimeout;
       async function searchBooksForModal(query) {
         const listDiv = document.getElementById("bookSuggestions");
@@ -1151,12 +1607,10 @@
             .select("*")
             .ilike("title", `%${query}%`)
             .limit(5);
-
           listDiv.innerHTML = "";
           if (data && data.length > 0) {
             listDiv.style.display = "block";
             data.forEach((book) => {
-              // Calculate available quantity
               const activeCount = allLogs.filter(
                 (l) =>
                   l.book_title &&
@@ -1164,16 +1618,13 @@
                   l.status === "active"
               ).length;
               const available = book.quantity - activeCount;
-
               const item = document.createElement("div");
               item.className = "suggestion-item";
-              // Show title and quantity in the dropdown
               item.innerHTML = `${
                 book.title
               } <span style="font-size:11px; color:${
                 available > 0 ? "green" : "red"
               }">(Mövcud: ${available})</span>`;
-
               item.onclick = () => {
                 document.getElementById("bTitle").value = book.title;
                 listDiv.style.display = "none";
@@ -1186,36 +1637,61 @@
         }, 300);
       }
 
-      function verifyTeacher() {
-        const today = new Date();
-        const correctPass = `${String(today.getDate()).padStart(
-          2,
-          "0"
-        )}${String(today.getMonth() + 1).padStart(
-          2,
-          "0"
-        )}${today.getFullYear()}`;
-        const userPass = prompt(t("prompt_pass"));
-        if (userPass === correctPass) showAdmin();
-        else if (userPass !== null) alert(t("alert_wrong_pass"));
+      let studentSearchTimeout;
+      async function searchStudentsForModal(query) {
+        const listDiv = document.getElementById("studentSuggestions");
+        if (query.length < 2) {
+          listDiv.style.display = "none";
+          return;
+        }
+        clearTimeout(studentSearchTimeout);
+        studentSearchTimeout = setTimeout(async () => {
+          const { data } = await sb
+            .from("students")
+            .select("*")
+            .ilike("full_name", `%${query}%`)
+            .limit(5);
+          listDiv.innerHTML = "";
+          if (data && data.length > 0) {
+            listDiv.style.display = "block";
+            data.forEach((st) => {
+              const item = document.createElement("div");
+              item.className = "suggestion-item";
+              item.innerText = `${st.full_name} (${st.class_name})`;
+              item.onclick = () => {
+                document.getElementById("sName").value = st.full_name;
+                document.getElementById("sClass").value = st.class_name;
+                listDiv.style.display = "none";
+              };
+              listDiv.appendChild(item);
+            });
+          } else {
+            listDiv.style.display = "none";
+          }
+        }, 300);
       }
 
       async function saveData() {
         const title = document.getElementById("bTitle").value;
         const name = document.getElementById("sName").value;
         const cls = document.getElementById("sClass").value;
-        if (!title || !name) return alert(t("alert_fill"));
-        await sb.from("library_logs").insert([
-          {
-            book_title: title,
-            student_name: name,
-            student_class: cls,
-            status: "pending",
-          },
-        ]);
-        alert(t("alert_success"));
-        closeModal("order");
-        fetchAllLogsForSystem();
+        if (!title || !name) return showToast(t("toast_fill"), "warning");
+        const { error } = await sb
+          .from("library_logs")
+          .insert([
+            {
+              book_title: title,
+              student_name: name,
+              student_class: cls,
+              status: "pending",
+            },
+          ]);
+        if (error) showToast("Error: " + error.message, "error");
+        else {
+          showToast(t("toast_success"), "success");
+          closeModal("order");
+          fetchAllLogsForSystem();
+        }
       }
 
       async function fetchAllLogsForSystem() {
@@ -1259,7 +1735,6 @@
             statusText = t("status_active");
             colorClass = "bg-green";
           }
-
           listDiv.innerHTML += `<div class="list-item"><div><div style="font-weight:600; font-size:14px; color:var(--text-main);">${
             item.book_title || t("unnamed")
           }</div><div style="font-size:12px; color:var(--text-sub);">${
@@ -1279,7 +1754,8 @@
           "topBooksList",
           Object.entries(bookCounts)
             .sort((a, b) => b[1] - a[1])
-            .slice(0, 5)
+            .slice(0, 5),
+          "book"
         );
         const readerCounts = {};
         const oneWeekAgo = new Date();
@@ -1296,10 +1772,12 @@
           "topReadersList",
           Object.entries(readerCounts)
             .sort((a, b) => b[1] - a[1])
-            .slice(0, 5)
+            .slice(0, 5),
+          "student"
         );
       }
-      function renderTopList(elementId, items) {
+
+      function renderTopList(elementId, items, type) {
         const div = document.getElementById(elementId);
         div.innerHTML = "";
         if (items.length === 0) {
@@ -1313,14 +1791,84 @@
           if (index === 0) rankClass += " rank-1";
           else if (index === 1) rankClass += " rank-2";
           else if (index === 2) rankClass += " rank-3";
+
+          let nameHtml = item[0];
+          if (type === "book")
+            nameHtml = `<span class="clickable-name" onclick="openBookDetails('${item[0].replace(
+              /'/g,
+              "\\'"
+            )}')">${item[0]}</span>`;
+          if (type === "student")
+            nameHtml = `<span class="clickable-name" onclick="openStudentDetails('${item[0].replace(
+              /'/g,
+              "\\'"
+            )}')">${item[0]}</span>`;
+
           div.innerHTML += `<div class="list-item"><div style="display:flex; align-items:center;"><div class="${rankClass}">${
             index + 1
-          }</div><div style="font-weight:500; font-size:14px;">${
-            item[0]
-          }</div></div><div style="font-weight:700; color:var(--primary); font-size:14px;">${
+          }</div><div style="font-weight:500; font-size:14px;">${nameHtml}</div></div><div style="font-weight:700; color:var(--primary); font-size:14px;">${
             item[1]
           }</div></div>`;
         });
+      }
+
+      // --- NEW: MODAL DETAILS LOGIC ---
+      async function openBookDetails(title) {
+        document.getElementById("bookDetailsModal").style.display = "flex";
+        document.getElementById("detailBookTitle").innerText = title;
+        document.getElementById("detailBookContent").innerHTML = "Loading...";
+
+        const logs = allLogs.filter(
+          (l) => l.book_title === title && l.is_reflection_approved
+        );
+
+        let html = "";
+        if (logs.length === 0)
+          html =
+            '<p style="text-align:center; color:#999;">Hələ rəy yoxdur.</p>';
+        else {
+          logs.forEach((l) => {
+            const stars = l.rating ? "⭐".repeat(l.rating) : "";
+            html += `<div class="detail-item"><div class="detail-header">${l.student_name} <span style="font-weight:400; color:#666;">(${l.student_class})</span> ${stars}</div><div class="detail-text">${l.reflection}</div></div>`;
+          });
+        }
+        document.getElementById("detailBookContent").innerHTML = html;
+      }
+
+      async function openStudentDetails(name) {
+        document.getElementById("studentDetailsModal").style.display = "flex";
+
+        // Şagirdin sinfini tapmaq üçün loglardan birinə baxırıq
+        const studentLog = allLogs.find((l) => l.student_name === name);
+        const className = studentLog ? studentLog.student_class : "";
+
+        document.getElementById(
+          "detailStudentName"
+        ).innerHTML = `${name} <span style="font-size:14px; color:#666;">(${className})</span>`;
+        document.getElementById("detailStudentContent").innerHTML =
+          "Loading...";
+
+        const logs = allLogs.filter((l) => l.student_name === name);
+
+        let html = "";
+        if (logs.length === 0)
+          html =
+            '<p style="text-align:center; color:#999;">Məlumat yoxdur.</p>';
+        else {
+          logs.forEach((l) => {
+            const stars = l.rating ? "⭐".repeat(l.rating) : "";
+            const date = new Date(l.borrow_date).toLocaleDateString();
+            const ref = l.reflection
+              ? `<div class="detail-text">"${l.reflection}"</div>`
+              : "";
+            html += `<div class="detail-item"><div class="detail-header">${
+              l.book_title
+            }</div><div class="detail-sub"><span>${date}</span><span>${
+              l.status === "returned" ? "✅ Bitdi" : "📖 Oxuyur"
+            } ${stars}</span></div>${ref}</div>`;
+          });
+        }
+        document.getElementById("detailStudentContent").innerHTML = html;
       }
 
       function filterAdminTable() {
@@ -1345,13 +1893,15 @@
           let statusHtml = "",
             actionHtml = "",
             termHtml = "";
-
-          /* ADMIN RƏY İKONU ƏLAVƏSİ */
-          let reflectionIcon = "";
+          let refIcon = "";
           if (item.reflection) {
-            reflectionIcon = `<span class="admin-ref-icon">💬<div class="ref-tooltip">${item.reflection}</div></span>`;
+            if (item.is_reflection_approved)
+              refIcon = `<span class="admin-ref-icon approved">💬<div class="ref-tooltip">${
+                item.rating ? "⭐" + item.rating : ""
+              } ${item.reflection}</div></span>`;
+            else
+              refIcon = `<span class="admin-ref-icon pending" onclick="approveReflection('${item.id}')">📩<div class="ref-tooltip"><b>Təsdiq Gözləyir!</b><br>${item.reflection}<br><small>(Təsdiqləmək üçün bura bas)</small></div></span>`;
           }
-
           if (item.status === "pending") {
             statusHtml = `<span class="badge bg-yellow">${t(
               "status_pending"
@@ -1386,14 +1936,13 @@
             )}</span>`;
             actionHtml = '<i class="fas fa-check" style="color:#10b981;"></i>';
           }
-
           tbody.innerHTML += `<tr><td><b>${
             item.student_name
           }</b><br><span style="font-size:12px; color:#9ca3af;">${
             item.student_class
           }</span></td><td>${
             item.book_title || t("unnamed")
-          } ${reflectionIcon}</td><td>${borrowDate.toLocaleDateString()}</td><td>${termHtml}</td><td>${statusHtml}</td><td style="text-align:right;">${actionHtml}</td></tr>`;
+          } ${refIcon}</td><td>${borrowDate.toLocaleDateString()}</td><td>${termHtml}</td><td>${statusHtml}</td><td style="text-align:right;">${actionHtml}</td></tr>`;
         });
       }
 
@@ -1408,14 +1957,14 @@
         fetchAllLogsForSystem();
       }
       async function returnBook(id) {
-        if (confirm(t("alert_return"))) {
+        customConfirm(t("alert_return"), async () => {
           const now = new Date().toISOString();
           await sb
             .from("library_logs")
             .update({ status: "returned", returned_at: now })
             .eq("id", id);
           fetchAllLogsForSystem();
-        }
+        });
       }
 
       function openModal(type) {
@@ -1427,6 +1976,13 @@
           document.getElementById("refStep2").classList.add("hidden");
           document.getElementById("refCode").value = "";
           document.getElementById("refText").value = "";
+          setRating(0);
+        } else if (type === "teacherLogin") {
+          document.getElementById("teacherLoginModal").style.display = "flex";
+        } else if (type === "bookDetails") {
+          /* logic handled in onclick */
+        } else if (type === "studentDetails") {
+          /* logic handled in onclick */
         }
       }
       function closeModal(type) {
@@ -1434,6 +1990,14 @@
           document.getElementById("orderModal").style.display = "none";
         else if (type === "reflection")
           document.getElementById("reflectionModal").style.display = "none";
+        else if (type === "teacherLogin")
+          document.getElementById("teacherLoginModal").style.display = "none";
+        else if (type === "confirm")
+          document.getElementById("confirmModal").style.display = "none";
+        else if (type === "bookDetails")
+          document.getElementById("bookDetailsModal").style.display = "none";
+        else if (type === "studentDetails")
+          document.getElementById("studentDetailsModal").style.display = "none";
       }
     </script>
   </body>
