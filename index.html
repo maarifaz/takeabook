@@ -1181,6 +1181,17 @@
           toast_fill: "⚠️ Xanaları doldurun!",
           toast_code_used: "⚠️ Bu kod artıq istifadə olunub!",
           toast_not_returned: "⚠️ Kitabı hələ təhvil verməmisiniz!",
+          lbl_shelf: "Rəf",
+          shelf_000: "000 - Ümumi Əsərlər",
+          shelf_100: "100 - Fəlsəfə və Psixologiya",
+          shelf_200: "200 - Din",
+          shelf_300: "300 - Sosial Elmlər",
+          shelf_400: "400 - Dil",
+          shelf_500: "500 - Elm",
+          shelf_600: "600 - Texnologiya",
+          shelf_700: "700 - İncəsənət və İdman",
+          shelf_800: "800 - Ədəbiyyat",
+          shelf_900: "900 - Tarix və Coğrafiya",
         },
         en: {
           app_title: "Infinity Library",
@@ -1228,6 +1239,17 @@
           toast_fill: "⚠️ Fill fields!",
           toast_code_used: "⚠️ Code already used!",
           toast_not_returned: "⚠️ Book not returned yet!",
+          lbl_shelf: "Shelf",
+          shelf_000: "000 - General Works",
+          shelf_100: "100 - Philosophy & Psychology",
+          shelf_200: "200 - Religion",
+          shelf_300: "300 - Social Sciences",
+          shelf_400: "400 - Language",
+          shelf_500: "500 - Science",
+          shelf_600: "600 - Technology",
+          shelf_700: "700 - Arts & Recreation",
+          shelf_800: "800 - Literature",
+          shelf_900: "900 - History & Geography",
         },
         tr: {
           app_title: "Infinity Library",
@@ -1275,6 +1297,17 @@
           toast_fill: "⚠️ Alanları doldurun!",
           toast_code_used: "⚠️ Bu kod daha önce kullanıldı!",
           toast_not_returned: "⚠️ Kitabı henüz teslim etmediniz!",
+          lbl_shelf: "Raf",
+          shelf_000: "000 - Genel Eserler",
+          shelf_100: "100 - Felsefe ve Psikoloji",
+          shelf_200: "200 - Din",
+          shelf_300: "300 - Sosyal Bilimler",
+          shelf_400: "400 - Dil",
+          shelf_500: "500 - Bilim",
+          shelf_600: "600 - Teknoloji",
+          shelf_700: "700 - Güzel Sanatlar",
+          shelf_800: "800 - Edebiyat",
+          shelf_900: "900 - Tarih ve Coğrafya",
         },
         ru: {
           app_title: "Infinity Library",
@@ -1322,12 +1355,39 @@
           toast_fill: "⚠️ Заполните поля!",
           toast_code_used: "⚠️ Код уже использован!",
           toast_not_returned: "⚠️ Книга еще не возвращена!",
+          lbl_shelf: "Полка",
+          shelf_000: "000 - Общие работы",
+          shelf_100: "100 - Философия и психология",
+          shelf_200: "200 - Религия",
+          shelf_300: "300 - Социальные науки",
+          shelf_400: "400 - Язык",
+          shelf_500: "500 - Естественные науки",
+          shelf_600: "600 - Технология",
+          shelf_700: "700 - Искусство и спорт",
+          shelf_800: "800 - Литература",
+          shelf_900: "900 - История и география",
         },
       };
 
       function t(key) {
         return translations[currentLang][key] || key;
       }
+
+      // HELPER: TRANSLATE SHELF LOCATION DYNAMICALLY
+      function getTranslatedShelf(originalStr) {
+        if (!originalStr) return "";
+        // Dewey kodunu çıxar (İlk 3 rəqəm)
+        const match = originalStr.match(/^\d{3}/);
+        if (match) {
+          const code = match[0];
+          // Yüzlük kateqoriyaya yuvarlaqlaşdır (Məs: 813 -> 800)
+          const roundedCode = code.charAt(0) + "00";
+          const key = `shelf_${roundedCode}`;
+          return translations[currentLang][key] || originalStr;
+        }
+        return originalStr;
+      }
+
       function changeLanguage(lang) {
         currentLang = lang;
         localStorage.setItem("lang", lang);
@@ -1556,6 +1616,14 @@
             ? `<div class="book-cover-wrapper"><img src="${coverUrl}" class="book-cover" alt="Cover"></div>`
             : `<div class="book-cover-wrapper"><div class="book-placeholder"><i class="fas fa-book"></i></div></div>`;
 
+          // DİNAMİK TƏRCÜMƏ EDİLMİŞ RƏF ADI
+          const translatedShelf = getTranslatedShelf(book.shelf_location);
+          const shelfBadge = translatedShelf
+            ? `<div style="font-size:11px; color:#4b5563; background:#f3f4f6; padding:2px 6px; border-radius:4px; display:inline-block; margin-top:4px;">📍 ${t(
+                "lbl_shelf"
+              )}: ${translatedShelf}</div>`
+            : "";
+
           resultDiv.innerHTML += `
             <div class="res-card">
                 <div style="display:flex; align-items:center;">
@@ -1567,6 +1635,7 @@
                         <div style="font-size:12px; color:#666;">${
                           book.author || ""
                         }</div>
+                        ${shelfBadge}
                     </div>
                     ${reflectionHtml}
                 </div>
@@ -1618,13 +1687,19 @@
                   l.status === "active"
               ).length;
               const available = book.quantity - activeCount;
+
+              // DİNAMİK TƏRCÜMƏ EDİLMİŞ RƏF ADI
+              const translatedShelf = getTranslatedShelf(book.shelf_location);
+
               const item = document.createElement("div");
               item.className = "suggestion-item";
               item.innerHTML = `${
                 book.title
               } <span style="font-size:11px; color:${
                 available > 0 ? "green" : "red"
-              }">(Mövcud: ${available})</span>`;
+              }">(Mövcud: ${available})</span> <br><small style="color:#666">📍 ${
+                translatedShelf || "800 - " + t("shelf_800").split(" - ")[1]
+              }</small>`;
               item.onclick = () => {
                 document.getElementById("bTitle").value = book.title;
                 listDiv.style.display = "none";
